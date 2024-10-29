@@ -1,5 +1,15 @@
 'use client'
 
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../components/ui/form";
+
+
 import { useState, useEffect } from 'react'
 import Image from 'next/image';
 import Link from "next/link"
@@ -17,8 +27,12 @@ import Pixel6 from '../../public/Pixel6.jpg';
 import Iphone16 from '../../public/Iphone16.jpg';
 import S21 from '../../public/Galaxy21.jpg';
 import Images from '../../public/Iphone14.png'
-import { Client, Databases, ID } from "appwrite";
 import { useToast } from "../hooks/use-toast"
+import { v4 as uuidV4 } from "uuid";
+import { useForm } from 'react-hook-form';
+import { FirestoreRepository } from '../api/firebase/firebase-repository';
+import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
 const fadeInUp = {
@@ -52,48 +66,47 @@ const customerSatisfactionData = [
   { year: 2023, satisfaction: 95 },
 ]
 
-;
 
-const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1')
-    .setProject('6713fd0e003744dc1d4c');
+interface UserMenu{
+  userName: string;
+  userEmail: string;
+  userMessage: string
+}
 
-const databases = new Databases(client);
+const formSchema = z.object({
+  userName: z.string().min(1, {message: "Campo obrigatório"}),
+  userEmail: z.string().min(1, {message: "Campo obrigatório"}).email({
+      message: "Deve ser um email válido"
+  }),
+  userMessage: z.string().min(1, {message: "Campo obrigatório"})
+})
+
+type FormSchema = z.infer<typeof formSchema>;
 
 export default function LandingPage() {
 
   const [mounted, setMounted] = useState(false)
   const { toast } = useToast();
   const { theme, setTheme } = useTheme()
-  const [username, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("")
 
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+  });
 
-  const HandleCreateDocument = (username: string, email: string, message: string): void => {
+  async function onSubmit(data: FormSchema) {
+    try {
+      const collectionName = 'FormsHomePage';
+      const baseFirestorm = new FirestoreRepository<UserMenu>();
+      const idUser = uuidV4();
+      await baseFirestorm.create(collectionName, idUser, data);
   
-    const promise = databases.createDocument(
-      '67140dfc0030c0200229',
-      '67140e08002ed0fefb2d',
-      ID.unique(),
-      { "Name": username,
-        "Email": email,
-        "Message": message
-      }
-      );
-  
-      promise.then(function (response) {
-          console.log(response);
-      }, function (error) {
-          console.log(error);
-      });
+      console.log("Document successfully created!", baseFirestorm);
+      toast({ title: "Success", description: "Your form was successfully submitted!" });
+    } catch (error) {
+      console.error("Error creating document: ", error);
+      toast({ title: "Error", description: "There was an error submitting the form." });
+    }
   }
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Previne o reload da página
-    // Chame a função passando os valores dos inputs
-    HandleCreateDocument(username, email, message);
-  };
 
   useEffect(() => {
     setMounted(true)
@@ -396,28 +409,58 @@ export default function LandingPage() {
                   <CardTitle className="text-blue-900 dark:text-blue-100">Send us a message</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSubmit}>
-                    <div className="grid gap-4">
-                      <div className="grid gap-2">
-                        <label htmlFor="name" className="text-blue-900 dark:text-blue-100">Name</label>
-                        <Input id="name" placeholder="Enter your name" value={username} onChange={(e) => setName(e.target.value) } className="bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100" />
-                      </div>
-                      <div className="grid gap-2">
-                        <label htmlFor="email" className="text-blue-900 dark:text-blue-100">Email</label>
-                        <Input id="email" placeholder="Enter your email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100" />
-                      </div>
-                      <div className="grid gap-2">
-                        <label htmlFor="message" className="text-blue-900 dark:text-blue-100">Message</label>
-                        <Textarea id="message" placeholder="Enter your message" value={message} onChange={(e) =>  setMessage(e.target.value)} className="bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100" />
-                      </div>
-                      <Button type="submit" onClick={() => {
-                        toast({
-                          title: "Você enviou o fomulário de contato!",
-                          description: "Entraremos em contato em breve."
-                        })
-                      }} className="w-full bg-blue-800 text-white hover:bg-blue-700 dark:bg-blue-200 dark:text-blue-900 dark:hover:bg-blue-300">Send Message</Button>
-                    </div>
-                  </form>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} >
+                      <div className='grid gap-4'>
+                          <FormField
+                                      control={form.control}
+                                      name="userName"
+                                      render={({ field }) => (
+                                          <FormItem>
+                                              <div className='grid gap-2'>
+                                                <FormLabel className='text-blue-900 dark:text-blue-100'>Name</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} className='bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100'   />
+                                                </FormControl>
+                                              </div>
+                                              <FormMessage />
+                                          </FormItem>
+                                      )}
+                                  />
+                          <FormField
+                                      control={form.control}
+                                      name="userEmail"
+                                      render={({ field }) => (
+                                          <FormItem>
+                                              <div className='grid gap-2'>
+                                                <FormLabel className='text-blue-900 dark:text-blue-100'>Email</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} className='bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100'  />
+                                                </FormControl>
+                                              </div>
+                                              <FormMessage />
+                                          </FormItem>
+                                      )}
+                                  />
+                          <FormField
+                                      control={form.control}
+                                      name="userMessage"
+                                      render={({ field }) => (
+                                          <FormItem>
+                                              <div className='grid gap-2'>
+                                                <FormLabel className='text-blue-900 dark:text-blue-100'>Message</FormLabel>
+                                                <FormControl>
+                                                    <Textarea {...field} className='bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100'  />
+                                                </FormControl>
+                                              </div>
+                                              <FormMessage />
+                                          </FormItem>
+                                      )}
+                                  />
+                           <Button type="submit" className="w-full bg-blue-800 text-white hover:bg-blue-700 dark:bg-blue-200 dark:text-blue-900 dark:hover:bg-blue-300">Send Message</Button>
+                        </div>
+                    </form>
+                  </Form>
                 </CardContent>
               </Card>
             </div>
@@ -495,5 +538,5 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
-  )
-}
+    )
+  }
