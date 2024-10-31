@@ -3,23 +3,23 @@
 import { useState } from 'react'
 import Link from "next/link"
 import { useTheme } from "next-themes"
-import { Button } from "../../components/ui/button"
-import { Input } from "../../components/ui/input"
-import { Textarea } from "../../components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
+import { Button } from "../../../components/ui/button"
+import { Input } from "../../../components/ui/input"
+import { Textarea } from "../../../components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import { Smartphone, Sun, Moon, ShoppingCart, Upload } from "lucide-react"
 import { motion } from "framer-motion"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useForm } from 'react-hook-form';
-import { FirestoreRepository } from '../../api/firebase/firebase-repository';
+import { FirestoreRepository } from '../../../api/firebase/firebase-repository';
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { v4 as uuidV4 } from "uuid";
 import { ref, uploadBytes } from 'firebase/storage';
-import { bucket } from '../../api/firebase/firebase';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../components/ui/form";
+import { bucket } from '../../../api/firebase/firebase';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../../components/ui/form";
 import {
   CloudUpload,
   Paperclip
@@ -30,16 +30,8 @@ import {
   FileUploader,
   FileUploaderContent,
   FileUploaderItem
-} from "../../../components/ui/extension/file-upload";
+} from "../../../../components/ui/extension/file-upload";
 
-type ProductData = {
-  name: string
-  brand: string
-  category: string
-  price: string
-  description: string
-  photo: File | null
-}
 
 interface ProductMenu {
   productName: string;
@@ -60,7 +52,7 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-export default function ProductRegistrationPage() {
+export default function RegisterProduct() {
   //const { theme, setTheme } = useTheme()
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'submitted' | 'error'>('idle')
 
@@ -165,7 +157,7 @@ export default function ProductRegistrationPage() {
                           <FormLabel  className='text-sm font-medium text-blue-900 dark:text-blue-100'>Product Description</FormLabel>
                           <FormControl>
                             <Input 
-                            placeholder=""
+                            defaultValue={''}
                             className='bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100'
                             type="text"
                             {...field} />

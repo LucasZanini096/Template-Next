@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { Button } from "../../components/ui/button"
@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Slider } from "../../components/ui/slider"
 import { Smartphone, Sun, Moon, ShoppingCart } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { fetchProducts } from '~/helpers/fetchProducts'
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -26,56 +27,64 @@ const stagger = {
   }
 }
 
-const products = [
-  { id: 1, name: "iPhone 13 Pro", price: 999, brand: "Apple", category: "Smartphone" },
-  { id: 2, name: "Samsung Galaxy S21", price: 799, brand: "Samsung", category: "Smartphone" },
-  { id: 3, name: "Google Pixel 6", price: 699, brand: "Google", category: "Smartphone" },
-  { id: 4, name: "OnePlus 9 Pro", price: 969, brand: "OnePlus", category: "Smartphone" },
-  { id: 5, name: "Xiaomi Mi 11", price: 749, brand: "Xiaomi", category: "Smartphone" },
-  { id: 6, name: "Sony Xperia 1 III", price: 1299, brand: "Sony", category: "Smartphone" },
-  { id: 7, name: "iPad Air", price: 599, brand: "Apple", category: "Tablet" },
-  { id: 8, name: "Samsung Galaxy Tab S7", price: 649, brand: "Samsung", category: "Tablet" },
-  { id: 9, name: "AirPods Pro", price: 249, brand: "Apple", category: "Accessory" },
-  { id: 10, name: "Galaxy Buds Pro", price: 199, brand: "Samsung", category: "Accessory" },
-]
+interface Product {
+  id: string;
+  productName: string;
+  productPrice: number;
+  productCategory: string;
+  productBrand: string;
+  productDescription: string;
+  productImage: string;
+}
 
 export default function Products() {
-  const { theme, setTheme } = useTheme()
-  const [filteredProducts, setFilteredProducts] = useState(products)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedBrand, setSelectedBrand] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("")
-  const [priceRange, setPriceRange] = useState([0, 1500])
+  const { theme, setTheme } = useTheme();
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [priceRange, setPriceRange] = useState([0, 1500]);
+  const [product, setProduct] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const getProducts = async () => {
+      const productsData = await fetchProducts();
+      setProduct(productsData);
+      setFilteredProducts(productsData);
+    };
+
+    getProducts();
+  }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value)
-    filterProducts(event.target.value, selectedBrand, selectedCategory, priceRange)
-  }
+    setSearchTerm(event.target.value);
+    filterProducts(event.target.value, selectedBrand, selectedCategory, priceRange);
+  };
 
   const handleBrandChange = (value: string) => {
-    setSelectedBrand(value)
-    filterProducts(searchTerm, value, selectedCategory, priceRange)
-  }
+    setSelectedBrand(value);
+    filterProducts(searchTerm, value, selectedCategory, priceRange);
+  };
 
   const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value)
-    filterProducts(searchTerm, selectedBrand, value, priceRange)
-  }
+    setSelectedCategory(value);
+    filterProducts(searchTerm, selectedBrand, value, priceRange);
+  };
 
   const handlePriceChange = (value: number[]) => {
-    setPriceRange(value)
-    filterProducts(searchTerm, selectedBrand, selectedCategory, value)
-  }
+    setPriceRange(value);
+    filterProducts(searchTerm, selectedBrand, selectedCategory, value);
+  };
 
   const filterProducts = (search: string, brand: string, category: string, price: number[]) => {
-    const filtered = products.filter(product => 
-      product.name.toLowerCase().includes(search.toLowerCase()) &&
-      (brand === "all" || product.brand === brand) &&
-      (category === "all" || product.category === category) &&
-      product.price >= price[0] && product.price <= price[1]
-    )
-    setFilteredProducts(filtered)
-  }
+    const filtered = product.filter((prod) =>
+      prod.productName.toLowerCase().includes(search.toLowerCase()) &&
+      (brand === "all" || prod.productBrand === brand) &&
+      (category === "all" || prod.productCategory === category) &&
+      prod.productPrice >= price[0] && prod.productPrice <= price[1]
+    );
+    setFilteredProducts(filtered);
+  };
 
   return (
     <motion.div 
@@ -236,32 +245,33 @@ export default function Products() {
                     >
                       <Card className="bg-white dark:bg-blue-800">
                         <CardHeader>
-                          <CardTitle className="text-blue-900 dark:text-blue-100">{product.name}</CardTitle>
+                          <CardTitle className="text-blue-900 dark:text-blue-100">{product.productName}</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <motion.img
-                            alt={product.name}
-                            className="w-full h-48 object-cover rounded-md"
+                            alt=""
+                            className="w-full h-48 object-contain rounded-md"
                             height="200"
-                            src="/placeholder.svg?height=200&width=300"
+                            src={product.productImage}
                             style={{
                               aspectRatio: "300/200",
-                              objectFit: "cover",
+                              objectFit: "contain",
                             }}
                             width="300"
                             whileHover={{ scale: 1.05 }}
                             transition={{ duration: 0.2 }}
                           />
-                          <p className="mt-2 text-blue-800 dark:text-blue-200">{product.brand} - {product.category}</p>
-                          <p className="text-2xl font-bold mt-4 text-blue-900 dark:text-blue-100">${product.price}</p>
+                          <p className="mt-2 text-blue-800 dark:text-blue-200">{product.productBrand} - {product.productCategory}</p>
+                          <p className="text-2xl font-bold mt-4 text-blue-900 dark:text-blue-100">${product.productPrice}</p>
                         </CardContent>
                         <CardFooter>
                           <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="w-full"
-                          >
-                            <Button className="w-full bg-blue-800 text-white hover:bg-blue-700 dark:bg-blue-200 dark:text-blue-900 dark:hover:bg-blue-300">Add to Cart</Button>
+                          > <Link href={`/products/${product.id}`}>
+                            <Button className="w-full bg-blue-800 text-white hover:bg-blue-700 dark:bg-blue-200 dark:text-blue-900 dark:hover:bg-blue-300">See more</Button>
+                          </Link>  
                           </motion.div>
                         </CardFooter>
                       </Card>
