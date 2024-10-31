@@ -8,7 +8,6 @@ import { Input } from "../../components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { Slider } from "../../components/ui/slider"
-import { Smartphone, Sun, Moon, ShoppingCart } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { fetchProducts } from '~/helpers/fetchProducts'
 
@@ -87,65 +86,7 @@ export default function Products() {
   };
 
   return (
-    <motion.div 
-      className="flex flex-col min-h-screen bg-white dark:bg-gray-900"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <motion.header 
-        className="px-4 lg:px-6 h-14 flex items-center border-b border-gray-200 dark:border-gray-700"
-        initial={{ y: -50 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      >
-        <Link className="flex items-center justify-center" href="/">
-          <Smartphone className="h-6 w-6 text-blue-800 dark:text-blue-400" />
-          <span className="ml-2 text-lg font-bold text-blue-800 dark:text-blue-400">CellMaster</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-sm font-medium hover:text-blue-800 dark:hover:text-blue-400 hover:underline underline-offset-4" href="/">
-            Home
-          </Link>
-          <Link className="text-sm font-medium hover:text-blue-800 dark:hover:text-blue-400 hover:underline underline-offset-4" href="/products">
-            Products
-          </Link>
-          <Link className="text-sm font-medium hover:text-blue-800 dark:hover:text-blue-400 hover:underline underline-offset-4" href="#">
-            About
-          </Link>
-          <Link className="text-sm font-medium hover:text-blue-800 dark:hover:text-blue-400 hover:underline underline-offset-4" href="#">
-            Contact
-          </Link>
-        </nav>
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Toggle Theme"
-            className="ml-4 text-blue-800 dark:text-blue-400"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          >
-            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
-        </motion.div>
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Shopping Cart"
-            className="ml-4 text-blue-800 dark:text-blue-400"
-          >
-            <ShoppingCart className="h-5 w-5" />
-          </Button>
-        </motion.div>
-      </motion.header>
-      <main className="flex-1">
+      <main className="flex-1 w-full">
         <section className="w-full py-12 md:py-24 lg:py-32 bg-blue-50 dark:bg-blue-900">
           <div className="container px-4 md:px-6">
             <motion.h1 
@@ -283,18 +224,5 @@ export default function Products() {
           </div>
         </section>
       </main>
-      <motion.footer 
-        className="bg-blue-900 dark:bg-blue-950 text-white py-6"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <div className="container mx-auto px-4">
-          <p className="text-center text-blue-200 dark:text-blue-300">
-            © {new Date().getFullYear()} CellMaster. All rights reserved.
-          </p>
-        </div>
-      </motion.footer>
-    </motion.div>
   )
 }

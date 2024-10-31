@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from "../components/ui/toaster"
+import AnimatedLayout from '../components/animatedLayout'
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+         <AnimatedLayout>
           {children}
+          </AnimatedLayout> 
         </ThemeProvider>
         <Toaster />
       </body>

@@ -2,13 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import Link from "next/link"
-import { useTheme } from "next-themes"
 import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card"
-import { Smartphone, Sun, Moon, ShoppingCart, Mail, Lock } from "lucide-react"
 import { motion } from "framer-motion"
-import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { AuthAPI } from '../../api/firebase/auth-api'
 import { z } from "zod";
@@ -23,7 +20,7 @@ import {
   FormMessage,
 } from "../../components/ui/form";
 import { useRouter } from 'next/navigation'; // Importe o useRouter
-
+import { useToast } from '../../hooks/use-toast'
 
 const authAPI = new AuthAPI();
 
@@ -47,11 +44,8 @@ type LoginSchema = z.infer<typeof loginSchema>;
 
 export default function Admin() {  
   const [isMounted, setIsMounted] = useState(false); // Verificação da montagem
-  const { theme, setTheme } = useTheme()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast();
   const router = useRouter(); // Crie uma instância do useRouter
   console.log(router);
 
@@ -64,17 +58,18 @@ useEffect(() => {
 }, []);
 
 async function onSignIn({ email, password }: LoginSchema) {
+  setIsLoading(true);
   const user = await authAPI.signInWithEmailAndPassword(email, password);
 
   if(user && isMounted) {
       console.log("Seja bem vindo")
+      toast({
+        title: `Seja bem-vindo, Admin`,
+    });
       router.push('/admin/registerProduct'); // Redirecione após o login bem-sucedido
   }
 
-  // toast({
-  //     title: "Seja bem-vindo,",
-  //     description: user.email,
-  // });
+   
 }
 
 async function onSignInWithGoogle() {
@@ -91,13 +86,7 @@ async function onSignInWithGoogle() {
 }
 
   return (
-    <motion.div 
-      className="flex flex-col min-h-screen bg-white dark:bg-gray-900"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <main className="flex-1 flex items-center justify-center p-4">
+      <main className="flex-1 w-full flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -172,7 +161,5 @@ async function onSignInWithGoogle() {
           </Card>
         </motion.div>
       </main>
-      <ToastContainer position="bottom-right" />
-    </motion.div>
   )
 }

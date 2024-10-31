@@ -13,14 +13,13 @@ import {
 import { useState, useEffect } from 'react'
 import Image from 'next/image';
 import Link from "next/link"
-import { useTheme } from "next-themes"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Textarea } from "../components/ui/textarea"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
-import { Smartphone, ShieldCheck, Truck, HeadphonesIcon, Mail, Phone, MapPin, Sun, Moon, Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
+import { Smartphone, ShieldCheck, Truck, HeadphonesIcon, Mail, Phone, MapPin } from "lucide-react"
 import { motion } from "framer-motion"
-import { Bar, BarChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../components/ui/chart"
 import Iphone13 from '../../public/Iphone13.png';
 import Pixel6 from '../../public/Pixel6.jpg';
@@ -87,7 +86,6 @@ export default function LandingPage() {
 
   const [mounted, setMounted] = useState(false)
   const { toast } = useToast();
-  const { theme, setTheme } = useTheme()
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -118,35 +116,6 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center border-b">
-        <Link className="flex items-center justify-center" href="#">
-          <Smartphone className="h-6 w-6" />
-          <span className="ml-2 text-lg font-bold">CellMaster</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-sm font-medium hover:underline hover:duration-200 underline-offset-4" href="#">
-            Home
-          </Link>
-          <Link className="text-sm font-medium hover:underline hover:duration-200 underline-offset-4" href="#">
-            Shop
-          </Link>
-          <Link className="text-sm font-medium hover:underline hover:duration-200 underline-offset-4" href="#">
-            About
-          </Link>
-          <Link className="text-sm font-medium hover:underline hover:duration-200 underline-offset-4" href="#">
-            Contact
-          </Link>
-        </nav>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Toggle Theme"
-          className="ml-4"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        >
-          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </Button>
-      </header>
       <main className="flex-1">
         <motion.section 
           className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-blue-900 dark:bg-blue-950 text-white"
@@ -201,11 +170,6 @@ export default function LandingPage() {
                 <p className="text-blue-800 dark:text-blue-200 text-lg">
                   Our team of experts is dedicated to helping you find the perfect device that fits your lifestyle and needs. We believe that the right smartphone can enhance your daily life, and we're here to guide you through the ever-evolving world of mobile technology.
                 </p>
-                <div className="flex justify-start">
-                  <Button className="bg-blue-800 text-white hover:bg-blue-700 dark:bg-blue-200 dark:text-blue-900 dark:hover:bg-blue-300 transition-colors duration-300">
-                    Learn More About Us
-                  </Button>
-                </div>
               </div>
               <div className="mt-4 lg:mt-0 flex justify-center">
                 <Image
@@ -467,76 +431,6 @@ export default function LandingPage() {
           </div>
         </motion.section>
       </main>
-      <footer className="bg-blue-900 dark:bg-blue-950 text-white">
-        <div className="container mx-auto px-4 py-12 md:py-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">About CellMaster</h3>
-              <p className="text-blue-200 dark:text-blue-300">
-                CellMaster is your trusted source for the latest smartphones and accessories. We're committed to providing top-notch customer service and expert advice.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">Home</Link></li>
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">Shop</Link></li>
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">About Us</Link></li>
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">Contact</Link></li>
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">FAQ</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
-              <ul className="space-y-2">
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">Shipping Policy</Link></li>
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">Returns & Exchanges</Link></li>
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">Terms & Conditions</Link></li>
-                <li><Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">Privacy Policy</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
-              <div className="flex space-x-4">
-                <Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">
-                  <Facebook className="h-6 w-6" />
-                  <span className="sr-only">Facebook</span>
-                </Link>
-                <Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">
-                  <Twitter className="h-6 w-6" />
-                  <span className="sr-only">Twitter</span>
-                </Link>
-                <Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">
-                  <Instagram className="h-6 w-6" />
-                  <span className="sr-only">Instagram</span>
-                </Link>
-                <Link href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors duration-300">
-                  <Linkedin className="h-6 w-6" />
-                  <span className="sr-only">LinkedIn</span>
-                </Link>
-              </div>
-              <div className="mt-4">
-                <h4 className="text-sm font-semibold mb-2">Subscribe to our newsletter</h4>
-                <form className="flex">
-                  <Input 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    className="bg-blue-800 dark:bg-blue-900 text-white border-blue-700 focus:border-blue-500"
-                  />
-                  <Button type="submit" className="ml-2 bg-blue-700 hover:bg-blue-600 text-white">
-                    Subscribe
-                  </Button>
-                </form>
-              </div>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-blue-800 dark:border-blue-800">
-            <p className="text-center text-blue-200 dark:text-blue-300">
-              © {new Date().getFullYear()} CellMaster. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
     )
   }

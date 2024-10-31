@@ -1,14 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import Link from "next/link"
-import { useTheme } from "next-themes"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
-import { Textarea } from "../../../components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
-import { Smartphone, Sun, Moon, ShoppingCart, Upload } from "lucide-react"
 import { motion } from "framer-motion"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -105,13 +101,7 @@ export default function RegisterProduct() {
 
 
   return (
-    <motion.div 
-      className="flex flex-col min-h-screen bg-white dark:bg-gray-900"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <main className="flex-1">
+      <main className="flex-1 w-full">
         <section className="w-full py-12 md:py-24 lg:py-32 bg-blue-50 dark:bg-blue-900">
           <div className="container px-4 md:px-6">
             <motion.h1 
@@ -304,19 +294,5 @@ export default function RegisterProduct() {
           </div>
         </section>
       </main>
-      <motion.footer 
-        className="bg-blue-900 dark:bg-blue-950 text-white py-6"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <div className="container mx-auto px-4">
-          <p className="text-center text-blue-200 dark:text-blue-300">
-            © {new Date().getFullYear()} CellMaster. All rights reserved.
-          </p>
-        </div>
-      </motion.footer>
-      <ToastContainer position="bottom-right" />
-    </motion.div>
   )
 }
