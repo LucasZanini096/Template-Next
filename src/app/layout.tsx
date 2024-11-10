@@ -19,9 +19,7 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-         <AnimatedLayout>
           {children}
-          </AnimatedLayout> 
         </ThemeProvider>
         <Toaster />
       </body>

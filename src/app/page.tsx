@@ -1,43 +1,38 @@
 'use client'
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../components/ui/form";
-
-
-import { useState, useEffect } from 'react'
+import React from 'react'
 import Image from 'next/image';
 import Link from "next/link"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Textarea } from "../components/ui/textarea"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
-import { Smartphone, ShieldCheck, Truck, HeadphonesIcon, Mail, Phone, MapPin } from "lucide-react"
-import { motion } from "framer-motion"
-import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../components/ui/chart"
-import Iphone13 from '../../public/Iphone13.png';
-import Pixel6 from '../../public/Pixel6.jpg';
-import Iphone16 from '../../public/Iphone16.jpg';
-import S21 from '../../public/Galaxy21.jpg';
-import Images from '../../public/Iphone14.png'
-import { useToast } from "../hooks/use-toast"
-import { v4 as uuidV4 } from "uuid";
-import { useForm } from 'react-hook-form';
-import { FirestoreRepository } from '../api/firebase/firebase-repository';
-import { z } from 'zod';
-import { zodResolver } from "@hookform/resolvers/zod";
+import { MessageSquare, Zap, Settings } from "lucide-react"
+import { Checkbox } from '~/components/ui/checkbox';
+import { InfiniteMovingCards } from '~/components/ui/infinite-moving-cards';
+import { TextGenerateEffect } from '~/components/ui/text-generate-effect';
+import { Navbar } from '~/components/custom/navbar';
+import { FocusCards } from '~/components/ui/focus-cards';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog';
+import { Label } from '~/components/ui/label';
+import { motion, useAnimation, useInView } from "framer-motion"
+import { ReactNode, CSSProperties, useEffect, useRef, useState } from "react"
 
+
+
+interface AnimatedSectionProps {
+  children: ReactNode
+  className?: string
+  style?: CSSProperties // Adiciona 'style' como uma propriedade opcional
+}
+
+const fadeIn = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6 }
+}
 
 const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
 }
 
 const stagger = {
@@ -48,389 +43,319 @@ const stagger = {
   }
 }
 
-const salesData = [
-  { month: "Jan", sales: 1000 },
-  { month: "Feb", sales: 1200 },
-  { month: "Mar", sales: 900 },
-  { month: "Apr", sales: 1500 },
-  { month: "May", sales: 1800 },
-  { month: "Jun", sales: 2000 },
-]
-
-const customerSatisfactionData = [
-  { year: 2019, satisfaction: 85 },
-  { year: 2020, satisfaction: 88 },
-  { year: 2021, satisfaction: 90 },
-  { year: 2022, satisfaction: 92 },
-  { year: 2023, satisfaction: 95 },
-]
-
-
-interface UserMenu{
-  userName: string;
-  userEmail: string;
-  userMessage: string
-}
-
-const formSchema = z.object({
-  userName: z.string().min(1, {message: "Campo obrigatório"}),
-  userEmail: z.string().min(1, {message: "Campo obrigatório"}).email({
-      message: "Deve ser um email válido"
-  }),
-  userMessage: z.string().min(1, {message: "Campo obrigatório"})
-})
-
-type FormSchema = z.infer<typeof formSchema>;
-
-export default function LandingPage() {
-
-  const [mounted, setMounted] = useState(false)
-  const { toast } = useToast();
-
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
-  });
-
-  async function onSubmit(data: FormSchema) {
-    try {
-      const collectionName = 'FormsHomePage';
-      const baseFirestorm = new FirestoreRepository<UserMenu>();
-      const idUser = uuidV4();
-      await baseFirestorm.create(collectionName, idUser, data);
-  
-      console.log("Document successfully created!", baseFirestorm);
-      toast({ title: "Success", description: "Your form was successfully submitted!" });
-    } catch (error) {
-      console.error("Error creating document: ", error);
-      toast({ title: "Error", description: "There was an error submitting the form." });
-    }
-  }
+function AnimatedSection({ children, className, style }: AnimatedSectionProps) {
+  const controls = useAnimation()
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return <div className="min-h-screen bg-white dark:bg-gray-900" /> 
-  }
+    if (inView) {
+      controls.start("visible")
+    }
+  }, [controls, inView])
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
-        <motion.section 
-          className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-blue-900 dark:bg-blue-950 text-white"
-          initial="initial"
-          animate="animate"
-          variants={fadeInUp}
-        >
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    Experience the Future of Mobile Technology
-                  </h1>
-                  <p className="max-w-[600px] text-blue-200 md:text-xl">
-                    Discover cutting-edge smartphones that redefine connectivity and innovation. Your perfect device awaits.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button className="bg-white text-blue-900 hover:bg-blue-100 dark:bg-blue-300 dark:text-blue-900 dark:hover:bg-blue-200 transition-colors duration-300">
-                    Shop Now
-                  </Button>
-                  <Button variant="outline" className="text-white border-white hover:bg-white hover:text-blue-900 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-blue-900 transition-colors duration-300">
-                    Learn More
-                  </Button>
-                </div>
-              </div>
-              <Image
-                alt="Latest Smartphone"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-                height="550"
-                src={Iphone16}
-                width="550"
+    <motion.section
+      ref={ref}
+      initial="hidden"
+      animate={controls}
+      variants={fadeInUp}
+      className={className}
+      style={style}
+    >
+      {children}
+    </motion.section>
+  )
+}
+
+const cards = [
+  {
+    title: "Imagem 01",
+    src: "https://images.unsplash.com/photo-1581092583537-20d51b4b4f1b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    title: "Imagem 02",
+    src: "https://images.unsplash.com/photo-1581094285214-779d97298443?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    title: "Imagem 03",
+    src: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    title: "Imagem 04",
+    src: "https://images.unsplash.com/photo-1581092163144-b7ae3c00adbc?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    title: "Imagem 05",
+    src: "https://images.unsplash.com/photo-1581094377969-665dbb7f5da7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    title: "Imagem 06",
+    src: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+];
+
+const testimonials = [
+  {
+    image: "/logo_p4-engenharia_G2eyys.png"
+  },
+  {
+    image: "/logo_grande.png"
+  },
+  {
+   image: "/empresa-de-construcao-civil.jpg"
+  },
+  {
+    image: "/Favicon-CarLuc.png"
+  },
+];
+
+export default function LandingPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      {/* Header */}
+      <div className="relative w-full flex items-center justify-center">
+        <Navbar className="top-2" />
+      </div>
+
+      {/* Hero Section */}
+      <AnimatedSection className="text-white bg-cover bg-center h-[45rem]" style={{backgroundImage: `url("/glenov-brankovic-6CT4cYdSNaI-unsplash.png")`}}>
+        <div className="w-full flex flex-col justify-center h-full px-4 py-24 md:py-32">
+          <motion.div className="max-w-2xl space-y-6" variants={fadeIn}>
+            <TextGenerateEffect className="text-4xl font-bold tracking-tighter sm:text-5xl" words='Inovação e Eficiência para seus Projetos de Engenharia' />
+            <motion.p className="text-white" variants={fadeIn}>
+            Oferecemos projetos personalizados e sustentáveis para otimizar o desempenho de sua empresa, desde a fase de planejamento até a execução final. Nossos especialistas garantem qualidade e eficiência em cada etapa.
+            </motion.p>
+            <motion.div className="flex flex-wrap gap-4" variants={fadeIn}>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                  <Button className='dark:text-white' style={{ backgroundColor: "#065130" }}>Saiba Mais</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Entre em contato</DialogTitle>
+                    <DialogDescription>
+                      Preencha o formulário abaixo para saber mais sobre nossos serviços.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name">Nome</Label>
+                      <Input id="name" placeholder="Seu nome completo" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" type="email" placeholder="Seu email" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="message">Mensagem</Label>
+                      <Textarea id="message" placeholder="Como podemos ajudar?" />
+                    </div>
+                    <Button type="submit" className='dark:text-white' style={{ backgroundColor: "#065130" }}>Enviar</Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+              <Button variant="outline">Solicite um Orçamento</Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </AnimatedSection>
+
+      {/* Features */}
+      <AnimatedSection className="container grid gap-12 px-4 py-24 md:grid-cols-3">
+        {[
+          { icon: MessageSquare, title: "Soluções Personalizadas e Inovadoras", description: "Desenvolvemos soluções personalizadas que atendem às necessidades específicas de cada cliente, aplicando inovação e tecnologia de ponta para garantir resultados de alta qualidade e eficiência." },
+          { icon: Zap, title: "Experiência Técnica e Equipe Qualificada", description: "Nossa equipe é composta por engenheiros experientes e qualificados em diversas especialidades, garantindo a expertise necessária para realizar projetos complexos com precisão e segurança." },
+          { icon: Settings, title: "Sustentabilidade e Eficiência Energética", description: "Comprometidos com práticas sustentáveis, nossos projetos incluem soluções que reduzem o consumo de energia e minimizam o impacto ambiental, gerando economia e responsabilidade social." }
+        ].map((feature, index) => (
+          <motion.div key={index} className="space-y-4 text-center" variants={fadeIn}>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <feature.icon className="mx-auto h-12 w-12" style={{ color: "#065130" }} />
+            </motion.div>
+            <h2 className="text-xl font-semibold">{feature.title}</h2>
+            <p className="text-gray-500">{feature.description}</p>
+          </motion.div>
+        ))}
+      </AnimatedSection>
+
+      {/* Gallery */}
+      <AnimatedSection className="bg-gray-50 py-24">
+        <div className="container px-4">
+          <motion.div className="mb-12 text-center" variants={fadeIn}>
+            <h2 className="text-3xl font-bold text-black">Galeria de Imagens</h2>
+            <p className="mt-4 text-gray-500">Explore nosso portfólio e veja nossos serviços em ação.</p>
+          </motion.div>
+          <motion.div className="grid gap-8" variants={stagger}>
+            <div>
+              <FocusCards cards={cards} />
+            </div>
+          </motion.div>
+        </div>
+      </AnimatedSection>
+
+      {/* Clients */}
+      <motion.section className="py-12 dark:bg-white">
+        <div className="container px-4">
+          <motion.div className="mb-12 text-center" variants={fadeIn}>
+            <h2 className="text-3xl font-bold dark:text-black">Nossos clientes</h2>
+          </motion.div>
+          <motion.div className="w-full" variants={stagger}>
+          <div className="h-[24rem] rounded-md flex flex-col antialiased dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+              <InfiniteMovingCards
+                items={testimonials}
+                direction="right"
+                speed="slow"
               />
             </div>
-          </div>
-        </motion.section>
-        <motion.section 
-          className="w-full py-12 md:py-24 lg:py-32 bg-blue-50 dark:bg-blue-900"
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          variants={fadeInUp}
-        >
-          <div className="container px-4 md:px-8">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-8 text-blue-900 dark:text-blue-100">About Us</h2>
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-              <div className="space-y-4">
-                <p className="text-blue-800 dark:text-blue-200 text-lg">
-                  At CellMaster, we're passionate about connecting people through cutting-edge mobile technology. With years of experience in the industry, we've built a reputation for offering the latest and greatest smartphones, coupled with unparalleled customer service.
-                </p>
-                <p className="text-blue-800 dark:text-blue-200 text-lg">
-                  Our team of experts is dedicated to helping you find the perfect device that fits your lifestyle and needs. We believe that the right smartphone can enhance your daily life, and we're here to guide you through the ever-evolving world of mobile technology.
-                </p>
-              </div>
-              <div className="mt-4 lg:mt-0 flex justify-center">
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Blog Posts */}
+      <AnimatedSection className="py-24">
+        <div className="container px-4">
+          <motion.div className="mb-12 text-center" variants={fadeIn}>
+            <h2 className="text-3xl font-bold">Descubra nossas últimas postagens</h2>
+            <p className="mt-4 text-gray-500">Explore insights e dicas valiosas para você</p>
+          </motion.div>
+          <motion.div className="grid gap-8 md:grid-cols-3" variants={stagger}>
+           
+              <motion.div  className="flex flex-col items-center rounded-lg border p-4 transition-colors hover:border-primary" variants={fadeIn} whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
                 <Image
-                  alt="CellMaster Store"
-                  className="aspect-[4/3] overflow-hidden rounded-lg object-cover"
-                  height="800"
-                  src={Images}
-                  width="600"
+                  src="https://images.unsplash.com/photo-1694521787193-9293daeddbaa?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  width={400}
+                  height={200}
+                  alt="Blog post image"
+                  className="rounded-lg object-cover"
                 />
-              </div>
-            </div>
-          </div>
-        </motion.section>
-        <motion.section 
-          className="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-900"
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          variants={fadeInUp}
-        >
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-8 text-blue-900 dark:text-blue-100">Featured Phones</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { title: "iPhone 13 Pro", price: "$999", image: Iphone13 },
-                { title: "Samsung Galaxy S21", price: "$799", image: S21 },
-                { title: "Google Pixel 6", price: "$699", image: Pixel6}
-              ].map((phone, index) => (
-                <motion.div key={index} whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
-                  <Card className="bg-white dark:bg-blue-800">
-                    <CardHeader>
-                      <CardTitle className="text-blue-900 dark:text-blue-100">{phone.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Image
-                        alt={phone.title}
-                        className="w-full h-60 object-contain rounded-md"
-                        height="300"
-                        src={phone.image}
-                        style={{
-                          aspectRatio: "300/300",
-                          objectFit: "contain",
-                        }}
-                        width="300"
-                      />
-                      <p className="text-2xl font-bold mt-4 text-blue-900 dark:text-blue-100">{phone.price}</p>
-                    </CardContent>
-                    <CardFooter>
-                      <Button className="w-full bg-blue-800 text-white hover:bg-blue-700 dark:bg-blue-200 dark:text-blue-900 dark:hover:bg-blue-300">Add to Cart</Button>
-                    </CardFooter>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
-        <motion.section 
-          className="w-full py-12 md:py-24 lg:py-32 bg-blue-50 dark:bg-blue-900"
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          variants={stagger}
-        >
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-8 text-blue-900 dark:text-blue-100">Why Choose Us</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { icon: ShieldCheck, title: "Secure Payments", description: "Your transactions are always safe and encrypted" },
-                { icon: Truck, title: "Fast Delivery", description: "Get your phone delivered to your doorstep quickly" },
-                { icon: HeadphonesIcon, title: "24/7 Support", description: "Our customer service team is always here to help" },
-                { icon: Smartphone, title: "Wide Selection", description: "Choose from a variety of top brands and models" }
-              ].map((item, index) => (
-                <motion.div key={index} className="flex flex-col items-center text-center" variants={fadeInUp}>
-                  <item.icon className="h-12 w-12 mb-4 text-blue-800 dark:text-blue-400" />
-                  <h3 className="text-xl font-bold mb-2 text-blue-900 dark:text-blue-100">{item.title}</h3>
-                  <p className="text-blue-800 dark:text-blue-200">{item.description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
-        <motion.section 
-          className="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-900"
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          variants={fadeInUp}
-        >
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-8 text-blue-900 dark:text-blue-100">Our Performance</h2>
-            <div className="grid gap-6 lg:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Monthly Sales</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer
-                    config={{
-                      sales: {
-                        label: "Sales",
-                        color: "#1e3a8a",
-                      },
-                    }}
-                    className="h-[300px]"
-                  >
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={salesData}>
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Bar dataKey="sales" fill="var(--color-sales)" radius={4} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  
-                  <CardTitle>Customer Satisfaction</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer
-                    config={{
-                      satisfaction: {
-                        label: "Satisfaction",
-                        color: "#1e3a8a",
-                      },
-                    }}
-                    className="h-[300px]"
-                  >
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={customerSatisfactionData}>
-                        <XAxis dataKey="year" />
-                        <YAxis />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="satisfaction" stroke="var(--color-satisfaction)" />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </motion.section>
-        <motion.section 
-          className="w-full py-12 md:py-24 lg:py-32 bg-blue-50 dark:bg-blue-900"
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          variants={fadeInUp}
-        >
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-blue-900 dark:text-blue-100">Ready to Upgrade?</h2>
-                <p className="mx-auto max-w-[600px] text-blue-800 dark:text-blue-200 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Join our mailing list to receive exclusive offers and be the first to know about new arrivals.
-                </p>
-              </div>
-              <div className="w-full max-w-sm space-y-2">
-                <form className="flex space-x-2">
-                  <Input className="max-w-lg flex-1 bg-white dark:bg-blue-800 text-blue-900 dark:text-blue-100" placeholder="Enter your email" type="email" />
-                  <Button type="submit" className="bg-blue-800 text-white hover:bg-blue-700 dark:bg-blue-200 dark:text-blue-900 dark:hover:bg-blue-300 transition-colors duration-300">Subscribe</Button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </motion.section>
-        <motion.section 
-          className="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-900"
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          variants={fadeInUp}
-        >
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2">
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-blue-900 dark:text-blue-100">Contact Us</h2>
-                <p className="text-blue-800 dark:text-blue-200">
-                  We're here to help and answer any question you might have. We look forward to hearing from you.
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center text-blue-800 dark:text-blue-200">
-                    <Mail className="w-4 h-4 mr-2" />
-                    <span>contact@cellmaster.com</span>
-                  </div>
-                  <div className="flex items-center text-blue-800 dark:text-blue-200">
-                    <Phone className="w-4 h-4 mr-2" />
-                    <span>+1 (555) 123-4567</span>
-                  </div>
-                  <div className="flex items-center text-blue-800 dark:text-blue-200">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span>123 Phone Street, Mobile City, 12345</span>
-                  </div>
+                <div className="mt-4">
+                  <p className="text-sm text-gray-500">Category • 5 min read</p>
+                  <h3 className="mt-2 text-xl font-semibold">Como otimizar seu chatbot para melhores resultados</h3>
+                  <p className="mt-2 text-gray-500">Aprenda a usar chatbots que realmente engajam seus usuários.</p>
+                  <Button className="mt-4 border-2 " variant="link" style={{ color: "#065130" ,  borderColor: "#065130"}}>
+                    Leia mais
+                  </Button>
                 </div>
+              </motion.div>
+            <motion.div className="flex flex-col items-center rounded-lg border p-4 transition-colors hover:border-primary" variants={fadeIn} whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
+                <Image
+                  src="https://images.unsplash.com/photo-1529792083865-d23889753466?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  width={400}
+                  height={200}
+                  alt="Blog post image"
+                  className="rounded-lg object-cover"
+                />
+                <div className="mt-4">
+                  <p className="text-sm text-gray-500">Category • 5 min read</p>
+                  <h3 className="mt-2 text-xl font-semibold">Como otimizar seu chatbot para melhores resultados</h3>
+                  <p className="mt-2 text-gray-500">Aprenda a usar chatbots que realmente engajam seus usuários.</p>
+                  <Button className="mt-4 border-2 " variant="link" style={{ color: "#065130" ,  borderColor: "#065130"}}>
+                    Leia mais
+                  </Button>
+                </div>
+              </motion.div>
+              <motion.div className="flex flex-col items-center rounded-lg border p-4 transition-colors hover:border-primary" variants={fadeIn} whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
+                <Image
+                  src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  width={400}
+                  height={200}
+                  alt="Blog post image"
+                  className="rounded-lg object-cover"
+                />
+                <div className="mt-4">
+                  <p className="text-sm text-gray-500">Category • 5 min read</p>
+                  <h3 className="mt-2 text-xl font-semibold">Como otimizar seu chatbot para melhores resultados</h3>
+                  <p className="mt-2 text-gray-500">Aprenda a usar chatbots que realmente engajam seus usuários.</p>
+                  <Button className="mt-4 border-2 " variant="link" style={{ color: "#065130" ,  borderColor: "#065130"}}>
+                    Leia mais
+                  </Button>
+                </div>
+              </motion.div>
+          </motion.div>
+          <motion.div className="mt-12 text-center" variants={fadeIn}>
+            <Button variant="outline">Ver todos</Button>
+          </motion.div>
+        </div>
+      </AnimatedSection>
+
+      {/* Contact Form */}
+      <AnimatedSection className="bg-gray-50 py-24">
+        <div className="container grid gap-12 px-4 md:grid-cols-2">
+          <motion.div className="space-y-4" variants={fadeIn}>
+            <h2 className="text-3xl font-bold text-black">Entre em contato</h2>
+            <p className="text-gray-500">Estamos aqui para você e vamos ajudar!</p>
+            <form className="space-y-4">
+              <Input placeholder="Nome" />
+              <Input type="email" placeholder="Email" />
+              <Textarea placeholder="Mensagem" />
+              <div className="flex items-center space-x-2">
+                <Checkbox id="terms" />
+                <label htmlFor="terms" className="text-sm text-gray-500">
+                  Li e aceito os Termos
+                </label>
               </div>
-              <Card className="bg-white dark:bg-blue-800">
-                <CardHeader>
-                  <CardTitle className="text-blue-900 dark:text-blue-100">Send us a message</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} >
-                      <div className='grid gap-4'>
-                          <FormField
-                                      control={form.control}
-                                      name="userName"
-                                      render={({ field }) => (
-                                          <FormItem>
-                                              <div className='grid gap-2'>
-                                                <FormLabel className='text-blue-900 dark:text-blue-100'>Name</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} className='bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100'   />
-                                                </FormControl>
-                                              </div>
-                                              <FormMessage />
-                                          </FormItem>
-                                      )}
-                                  />
-                          <FormField
-                                      control={form.control}
-                                      name="userEmail"
-                                      render={({ field }) => (
-                                          <FormItem>
-                                              <div className='grid gap-2'>
-                                                <FormLabel className='text-blue-900 dark:text-blue-100'>Email</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} className='bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100'  />
-                                                </FormControl>
-                                              </div>
-                                              <FormMessage />
-                                          </FormItem>
-                                      )}
-                                  />
-                          <FormField
-                                      control={form.control}
-                                      name="userMessage"
-                                      render={({ field }) => (
-                                          <FormItem>
-                                              <div className='grid gap-2'>
-                                                <FormLabel className='text-blue-900 dark:text-blue-100'>Message</FormLabel>
-                                                <FormControl>
-                                                    <Textarea {...field} className='bg-white dark:bg-blue-700 text-blue-900 dark:text-blue-100'  />
-                                                </FormControl>
-                                              </div>
-                                              <FormMessage />
-                                          </FormItem>
-                                      )}
-                                  />
-                           <Button type="submit" className="w-full bg-blue-800 text-white hover:bg-blue-700 dark:bg-blue-200 dark:text-blue-900 dark:hover:bg-blue-300">Send Message</Button>
-                        </div>
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
+              <Button className='dark:text-white' style={{ backgroundColor: "#065130" }}>Enviar</Button>
+            </form>
+          </motion.div>
+          <motion.div className="hidden md:block" variants={fadeIn} whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
+            <Image
+              src="https://images.unsplash.com/photo-1652303518379-c0ef1c9fb2b1?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              width={600}
+              height={400}
+              alt="Contact illustration"
+              className="rounded-lg object-cover"
+            />
+          </motion.div>
+        </div>
+      </AnimatedSection>
+
+      {/* Footer */}
+      <motion.footer className="border-t" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.2 }}>
+        <div className="container px-4 py-12">
+          <div className="grid gap-8 md:grid-cols-4">
+            <div>
+              <Link className="font-semibold" href="/">
+                <Image src='/PROENG.png' width={100} height={50} alt={''} />
+              </Link>
+              <p className="mt-4 text-sm text-gray-500">
+              Rua Tupi, 13 - Valparaíso - Sto. André - SP
+                <br />
+                (11) 4319-7888
+                <br />
+                Brasil
+                <br />
+                comercial@proengg.com.br
+                <br />
+                <br />
+                Seg.-Sex.: 9AM - 6PM
+                <br />
+              </p>
             </div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="space-y-4">
+                <h3 className="font-semibold">Link Box</h3>
+                <ul className="space-y-2 text-sm text-gray-500">
+                  <li>
+                    <Link href="#">Link Item</Link>
+                  </li>
+                  <li>
+                    <Link href="#">Link Item</Link>
+                  </li>
+                  <li>
+                    <Link href="#">Link Item</Link>
+                  </li>
+                </ul>
+              </div>
+            ))}
           </div>
-        </motion.section>
-      </main>
+          <div className="mt-12 border-t pt-8 text-center text-sm text-gray-500">
+            © 2024 Example. Todos os direitos reservados.
+          </div>
+        </div>
+      </motion.footer>
     </div>
     )
   }
