@@ -232,9 +232,9 @@ export default function LandingPage() {
                   className="rounded-lg object-cover"
                 />
                 <div className="mt-4">
-                  <p className="text-sm text-gray-500">Category • 5 min read</p>
-                  <h3 className="mt-2 text-xl font-semibold">Como otimizar seu chatbot para melhores resultados</h3>
-                  <p className="mt-2 text-gray-500">Aprenda a usar chatbots que realmente engajam seus usuários.</p>
+                  <p className="text-sm text-gray-500">Engenharia Civil - 5 min</p>
+                  <h3 className="mt-2 text-xl font-semibold">Melhore a Eficiência do Seu Projeto com Gestão de Qualidade</h3>
+                  <p className="mt-2 text-gray-500">Aplique métodos avançados de controle de qualidade e minimize desperdícios na execução de obras e projetos de engenharia.</p>
                   <Button className="mt-4 border-2 " variant="link" style={{ color: "#065130" ,  borderColor: "#065130"}}>
                     Leia mais
                   </Button>
@@ -249,9 +249,9 @@ export default function LandingPage() {
                   className="rounded-lg object-cover"
                 />
                 <div className="mt-4">
-                  <p className="text-sm text-gray-500">Category • 5 min read</p>
-                  <h3 className="mt-2 text-xl font-semibold">Como otimizar seu chatbot para melhores resultados</h3>
-                  <p className="mt-2 text-gray-500">Aprenda a usar chatbots que realmente engajam seus usuários.</p>
+                  <p className="text-sm text-gray-500">Engenharia Civil - 5 min</p>
+                  <h3 className="mt-2 text-xl font-semibold">Infraestrutura Urbana: Soluções para Cidades Inteligentes</h3>
+                  <p className="mt-2 text-gray-500">Conheça nossas soluções de infraestrutura que melhoram a mobilidade e a segurança em áreas urbanas.</p>
                   <Button className="mt-4 border-2 " variant="link" style={{ color: "#065130" ,  borderColor: "#065130"}}>
                     Leia mais
                   </Button>
@@ -266,9 +266,9 @@ export default function LandingPage() {
                   className="rounded-lg object-cover"
                 />
                 <div className="mt-4">
-                  <p className="text-sm text-gray-500">Category • 5 min read</p>
-                  <h3 className="mt-2 text-xl font-semibold">Como otimizar seu chatbot para melhores resultados</h3>
-                  <p className="mt-2 text-gray-500">Aprenda a usar chatbots que realmente engajam seus usuários.</p>
+                  <p className="text-sm text-gray-500">Engenharia Civil - 5 min</p>
+                  <h3 className="mt-2 text-xl font-semibold">Inovação em Processos de Soldagem para Construção</h3>
+                  <p className="mt-2 text-gray-500">Utilize técnicas de soldagem modernas que garantem resistência e segurança para os projetos mais desafiadores.</p>
                   <Button className="mt-4 border-2 " variant="link" style={{ color: "#065130" ,  borderColor: "#065130"}}>
                     Leia mais
                   </Button>
@@ -334,22 +334,41 @@ export default function LandingPage() {
                 <br />
               </p>
             </div>
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="space-y-4">
-                <h3 className="font-semibold">Link Box</h3>
+              <div className="space-y-4">
+                <h3 className="font-semibold">Páginas</h3>
                 <ul className="space-y-2 text-sm text-gray-500">
                   <li>
-                    <Link href="#">Link Item</Link>
+                    <Link href="#">Página Inicial</Link>
                   </li>
                   <li>
-                    <Link href="#">Link Item</Link>
+                    <Link href="#">Sobre Nós</Link>
                   </li>
                   <li>
-                    <Link href="#">Link Item</Link>
+                    <Link href="#">Serviços</Link>
+                  </li>
+                  <li>
+                    <Link href="#">Contato</Link>
                   </li>
                 </ul>
               </div>
-            ))}
+              <div className="space-y-4">
+                <h3 className="font-semibold">Serviços</h3>
+                <ul className="space-y-2 text-sm text-gray-500">
+                  <li>
+                    <Link href="#">Solo Grampeado</Link>
+                  </li>
+                  <li>
+                    <Link href="#">Concreto Projetado</Link>
+                  </li>
+                  <li>
+                    <Link href="#">Injeções de Consolidação</Link>
+                  </li>
+                  <li>
+                    <Link href="#">Estaca Tipo Raíz</Link>
+                  </li>
+                </ul>
+              </div>
+
           </div>
           <div className="mt-12 border-t pt-8 text-center text-sm text-gray-500">
             © 2024 Example. Todos os direitos reservados.
